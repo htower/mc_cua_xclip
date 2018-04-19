@@ -4,7 +4,7 @@
 # MIT License, see http://opensource.org/licenses/MIT
 
 USER=`whoami`
-if [[ `ps -u $USER | grep " mc"` ]];
+if [[ `ps -u $USER | grep -E " mc(edit|view|diff)?$"` ]];
 then
     echo "Please close all mc instances before running the script"
     exit 1
