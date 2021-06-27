@@ -15,6 +15,6 @@ The script setup your midnight commander for using standard CUA-like editor shor
 ## Limitations
 Keyboard shortcuts used in the script may not work on your system for a number of reasons. On my [neon](https://neon.kde.org) system with `konsole` terminal emulator everything works well.
 
-Copyright (c) 2018, Anton Anikin <anton@anikin.xyz>
+Copyright (c) 2018 - present, Anton Anikin <anton@anikin.xyz>
 
 MIT License, see http://opensource.org/licenses/MIT

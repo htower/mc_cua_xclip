@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Copyright (c) 2018, Anton Anikin <anton@anikin.xyz>
+# Copyright (c) 2018 - present, Anton Anikin <anton@anikin.xyz>
 # MIT License, see http://opensource.org/licenses/MIT
 
 USER=`whoami`
@@ -31,58 +31,78 @@ then
     exit 1
 fi
 
-echo "Update settings"
-crudini --set $INI "Midnight-Commander" "editor_persistent_selections" "false"
-crudini --set $INI "Midnight-Commander" "editor_cursor_after_inserted_block" "true"
-crudini --set $INI "Midnight-Commander" "editor_group_undo" "true"
-crudini --set $INI "Misc" "clipboard_store" "xclip -i -selection clipboard"
-crudini --set $INI "Misc" "clipboard_paste" "xclip -o -selection clipboard"
+function update_settings {
+  crudini --set $INI "$1" "$2" "$3"
+  printf "."
+}
+
+printf "Update settings "
+update_settings "Midnight-Commander" "editor_persistent_selections" "false"
+update_settings "Midnight-Commander" "editor_cursor_after_inserted_block" "true"
+update_settings "Midnight-Commander" "editor_group_undo" "true"
+update_settings "Misc" "clipboard_store" "xclip -i -selection clipboard"
+update_settings "Misc" "clipboard_paste" "xclip -o -selection clipboard"
+echo ""
 
 if [ ! -f $KEYMAP ];
 then
     echo "Copy default keymap"
-    cp /etc/mc/mc.default.keymap $KEYMAP
+    if [[ -f /etc/NIXOS || `grep "NAME=NixOS" /etc/os-release` ]];
+    then
+      p=`which mc`
+      p=`readlink $p`
+      p=`dirname $p`
+      cp "$p/../etc/mc/mc.default.keymap" $KEYMAP
+      chmod 644 $KEYMAP
+    else
+      cp /etc/mc/mc.default.keymap $KEYMAP
+    fi
 fi
 
-echo "Update keymap"
+function update_keymap {
+  crudini --set $KEYMAP "$1" "$2" "$3"
+  printf "."
+}
 
-crudini --set $KEYMAP "main" "Quit" "ctrl-q; f10"
+printf "Update keymap "
+update_keymap "main" "Quit" "ctrl-q; f10"
 
-crudini --set $KEYMAP "input" "Home" "home"
-crudini --set $KEYMAP "input" "End" "end"
-crudini --set $KEYMAP "input" "Left" "left"
-crudini --set $KEYMAP "input" "Right" "right"
-crudini --set $KEYMAP "input" "WordLeft" "ctrl-left"
-crudini --set $KEYMAP "input" "WordRight" "ctrl-right"
-crudini --set $KEYMAP "input" "Backspace" "backspace"
-crudini --set $KEYMAP "input" "Delete" "delete"
-crudini --set $KEYMAP "input" "Cut" "ctrl-x; shift-delete"
-crudini --set $KEYMAP "input" "Store" "ctrl-c; ctrl-insert"
-crudini --set $KEYMAP "input" "Paste" "ctrl-v; shift-insert"
-crudini --set $KEYMAP "input" "HistoryPrev" "ctrl-down"
-crudini --set $KEYMAP "input" "HistoryNext" "ctrl-up"
-crudini --set $KEYMAP "input" "Complete" "ctrl-space"
+update_keymap "input" "Home" "home"
+update_keymap "input" "End" "end"
+update_keymap "input" "Left" "left"
+update_keymap "input" "Right" "right"
+update_keymap "input" "WordLeft" "ctrl-left"
+update_keymap "input" "WordRight" "ctrl-right"
+update_keymap "input" "Backspace" "backspace"
+update_keymap "input" "Delete" "delete"
+update_keymap "input" "Cut" "ctrl-x; shift-delete"
+update_keymap "input" "Store" "ctrl-c; ctrl-insert"
+update_keymap "input" "Paste" "ctrl-v; shift-insert"
+update_keymap "input" "HistoryPrev" "ctrl-down"
+update_keymap "input" "HistoryNext" "ctrl-up"
+update_keymap "input" "Complete" "ctrl-space"
 
-crudini --set $KEYMAP "editor" "Store" "ctrl-c; ctrl-insert"
-crudini --set $KEYMAP "editor" "Paste" "ctrl-v; shift-insert"
-crudini --set $KEYMAP "editor" "Cut" "ctrl-x; shift-delete"
-crudini --set $KEYMAP "editor" "WordLeft" "ctrl-left"
-crudini --set $KEYMAP "editor" "WordRight" "ctrl-right"
-crudini --set $KEYMAP "editor" "BackSpace" "backspace"
-crudini --set $KEYMAP "editor" "Delete" "delete"
-crudini --set $KEYMAP "editor" "Undo" "ctrl-z"
-crudini --set $KEYMAP "editor" "Top" "ctrl-home"
-crudini --set $KEYMAP "editor" "Bottom" "ctrl-end"
-crudini --set $KEYMAP "editor" "Save" "ctrl-s; f2"
-crudini --set $KEYMAP "editor" "MarkAll" "ctrl-a"
-crudini --set $KEYMAP "editor" "Search" "ctrl-f; f7"
-crudini --set $KEYMAP "editor" "Replace" "ctrl-r; f4"
-crudini --set $KEYMAP "editor" "Complete" "ctrl-space"
-crudini --set $KEYMAP "editor" "Quit" "ctrl-q; f10; esc"
+update_keymap "editor" "Store" "ctrl-c; ctrl-insert"
+update_keymap "editor" "Paste" "ctrl-v; shift-insert"
+update_keymap "editor" "Cut" "ctrl-x; shift-delete"
+update_keymap "editor" "WordLeft" "ctrl-left"
+update_keymap "editor" "WordRight" "ctrl-right"
+update_keymap "editor" "BackSpace" "backspace"
+update_keymap "editor" "Delete" "delete"
+update_keymap "editor" "Undo" "ctrl-z"
+update_keymap "editor" "Top" "ctrl-home"
+update_keymap "editor" "Bottom" "ctrl-end"
+update_keymap "editor" "Save" "ctrl-s; f2"
+update_keymap "editor" "MarkAll" "ctrl-a"
+update_keymap "editor" "Search" "ctrl-f; f7"
+update_keymap "editor" "Replace" "ctrl-r; f4"
+update_keymap "editor" "Complete" "ctrl-space"
+update_keymap "editor" "Quit" "ctrl-q; f10; esc"
 
-crudini --set $KEYMAP "editor" "BlockSave"
-crudini --set $KEYMAP "editor" "InsertLiteral"
-crudini --set $KEYMAP "editor" "MacroStartStopRecord"
-crudini --set $KEYMAP "editor" "SyntaxOnOff"
+update_keymap "editor" "BlockSave"
+update_keymap "editor" "InsertLiteral"
+update_keymap "editor" "MacroStartStopRecord"
+update_keymap "editor" "SyntaxOnOff"
+echo ""
 
 echo "All done"
